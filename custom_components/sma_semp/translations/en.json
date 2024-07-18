@@ -1,0 +1,112 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "menu_options": {
+                  "energyusageonly": "Report only energy usage.",
+                  "energyusagecontrollable": "Non-interruptible device is to be controlled by the SHM2.", 
+                  "energyusagecontrollableinterruptable": "Interruptible device to be controlled by SHM2." 
+                }
+            },
+            "energyusageonly": {
+                "data": {
+                    "id": "ID",
+                    "name": "Name",
+                    "source": "Sensor for Power Consumption 1",
+                    "semptyp": "Device Type",
+                    "sempmaxconsumption": "Max Power Consumption",
+
+                    "sempminconsumption": "Min Power Consumption",
+                    "minrunningtime": "Minimum running time",
+                    "maxrunningtime": "Maximum running time",
+                    "calendar": "Calendar with timeframes",
+                    "onoffswitch": "On/Off switch",
+
+                    "minontime": "Min On-Time",
+                    "minofftime": "Min Off-Time"
+                },
+                "data_description": {
+                    "minrunningtime": "Minimum running time within the timeframe specified in the calander.",
+                    "maxrunningtime": "Maximum running time within the timeframe specified in the calander.",
+                    "calendar": "The calendar defines the timeframe in which the device should run. The running time depends on the Minimum and Maxium running time.",
+                    "minontime": "If the device is switched on, it has to remain on for at least this duration.",
+                    "minofftime": "If the device is switched off, it has to remain off for at least this duration."
+               },
+                "description": "configuration of the device control.",
+                "title": "Configuration device control 1 "
+            },
+            "energyusagecontrollable": {
+                "menu_options": {
+                  "energyusageonly": "Report only energy usage.",
+                  "energyusagecontrollable": "Non-interruptible device is to be controlled by the SHM2.", 
+                  "energyusagecontrollableinterruptable": "Interruptible device to be controlled by SHM2." 
+                },
+                "data": {
+                    "id": "ID",
+                    "name": "Name",
+                    "source": "Sensor for Power Consumption 1",
+                    "semptyp": "Device Type",
+                    "sempmaxconsumption": "Max Power Consumption",
+
+                    "sempminconsumption": "Min Power Consumption",
+                    "minrunningtime": "Minimum running time",
+                    "maxrunningtime": "Maximum running time",
+                    "calendar": "Calendar with timeframes",
+                    "onoffswitch": "On/Off switch",
+
+                    "minontime": "Min On-Time",
+                    "minofftime": "Min Off-Time"
+                },
+                "data_description": {
+                    "minrunningtime": "Minimum running time within the timeframe specified in the calander.",
+                    "maxrunningtime": "Maximum running time within the timeframe specified in the calander.",
+                    "calendar": "The calendar defines the timeframe in which the device should run. The running time depends on the Minimum and Maxium running time.",
+                    "minontime": "If the device is switched on, it has to remain on for at least this duration.",
+                    "minofftime": "If the device is switched off, it has to remain off for at least this duration."
+               },
+                "description": "configuration of the device control.",
+                "title": "Configuration device control 1 "
+            },
+            "energyusagecontrollableinterruptable": {
+                "menu_options": {
+                  "energyusageonly": "Report only energy usage.",
+                  "energyusagecontrollable": "Non-interruptible device is to be controlled by the SHM2.", 
+                  "energyusagecontrollableinterruptable": "Interruptible device to be controlled by SHM2." 
+                },
+                "data": {
+                    "id": "ID",
+                    "name": "Name",
+                    "source": "Sensor for Power Consumption 1",
+                    "semptyp": "Device Type",
+                    "sempmaxconsumption": "Max Power Consumption",
+
+                    "sempminconsumption": "Min Power Consumption",
+                    "minrunningtime": "Minimum running time",
+                    "maxrunningtime": "Maximum running time",
+                    "calendar": "Calendar with timeframes",
+                    "onoffswitch": "On/Off switch",
+
+                    "minontime": "Min On-Time",
+                    "minofftime": "Min Off-Time"
+                },
+                "data_description": {
+                    "minrunningtime": "Minimum running time within the timeframe specified in the calander.",
+                    "maxrunningtime": "Maximum running time within the timeframe specified in the calander.",
+                    "calendar": "The calendar defines the timeframe in which the device should run. The running time depends on the Minimum and Maxium running time.",
+                    "minontime": "If the device is switched on, it has to remain on for at least this duration.",
+                    "minofftime": "If the device is switched off, it has to remain off for at least this duration."
+               },
+                "description": "configuration of the device control.",
+                "title": "Configuration device control 1 "
+            }
+        }
+    }
+}

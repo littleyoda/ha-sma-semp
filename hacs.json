@@ -1,0 +1,6 @@
+{
+  "name": "SMA SEMP Gateway",
+  "zip_release": true,
+  "render_readme": true,
+  "filename": "ha-sma-semp.zip"
+}

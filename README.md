@@ -50,14 +50,18 @@ Die einfachste Installation erfolgt mit Hilfe von HACS.
 
 Dazu muss HACS bereits [installiert](https://hacs.xyz/) sein.
 
-Durch einen Klick auf den folgenden Button wird die Integration automatisch zu HACS hinzugefügt.
-
-[Link zum Hinzufügen dieser Integration](https://my.home-assistant.io/redirect/hacs_repository/?owner=littleyoda&repository=ha-sma-semp&category=integration)
+Folgende Schritte sind notwendig:
+* Hinzufügen der Integration:<br>[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=littleyoda&repository=ha-sma-semp&category=integration)
+* Anschließend auf Download klicken und den Download bestätigen
+* Nach dem Download der Integration muss Home Assistant zwingend neugestartet werden:<br>[![Open your Home Assistant instance and show the system dashboard.](https://my.home-assistant.io/badges/system_dashboard.svg)](https://my.home-assistant.io/redirect/system_dashboard/)
 
 # Konfiguration
 
 ## Hinzufügen von neuen Geräten (in Home Assistant)
-Drei Möglichkeiten stehen zur Auswahl:
+
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=smasemp)
+
+Drei Möglichkeiten stehen anschließend zur Auswahl:
 
 ![Teil 1 der Konfiguration](doc/images/config01.png)
 

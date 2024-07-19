@@ -13,3 +13,8 @@ for i in sunnyportal-anlagenüberwachung.png sunnyportal-add.png
 do
 	convert -resize 700x $i ../$i 
 done
+
+for i in calendar.png
+do
+	convert -resize 350x $i ../$i
+done

@@ -3,6 +3,7 @@
 - [Installation](#installation)
 - [Konfiguration](#konfiguration)
   - [Hinzufügen von neuen Geräten (in Home Assistant)](#hinzufügen-von-neuen-geräten-in-home-assistant)
+  - [Kalendar Einträge](#kalendar-einträge)
   - [Hinzufügen von neuen Geräten (in Sunny Portal)](#hinzufügen-von-neuen-geräten-in-sunny-portal)
 - [Classic Portal](#classic-portal)
 - [Enneos Portal](#enneos-portal)
@@ -77,6 +78,19 @@ Drei Möglichkeiten stehen anschließend zur Auswahl:
 | Erweitere Konfiguration "Interruptible"<br>Unterbrechbare Geräte durch SHM2 steuern lassen  |    |
 |-----|-----|
 | _Min On Time_<br>Wie lange das Gerät mindestens eingeschaltet sein muss, <br> bevor es wieder ausgeschaltet werden darf.<br><br>_Min Off Time_<br>Wie lange das Gerät mindestens ausgeschaltet sein muss,<br> beovr es eingeschaltet werden darf. | [![Konfiguraiton für Stromverbrauch melden](doc/images/config-interruptible.png)](doc/images/orig/config-interruptible.png) |
+
+## Kalendar Einträge
+Die Kalendereinträge werden verwendet, um dem Energiemanagementsystem (SHM2) mitzuteilen, in welchem Zeitraum die Geräte grundsätzlich laufen dürfen. Mit „Minimum running time“ und „Maximum running time“ wird festgelegt, wie lange die Geräte mindestens bzw. maximal laufen dürfen.
+
+Die Kalendereinträge werden den einzelnen Geräten über den Title zugeordnet. Der Title der Kalendereinträge muss somit dem Gerätenamen übereinstimmen.
+
+
+[![Kalendareinträge](doc/images/calendar.png)](doc/images/calendar.png)
+
+Beispiel: Durch den Kalendereintrag wird festgelegt, dass die Pumpe grundsätzlich zwischen 8:00 und 18:00 Uhr laufen darf. Durch „Minimale Laufzeit: 4 h“ und „Maximale Laufzeit: 6 h“ wird festgelegt, dass die Pumpe mindestens 4 Stunden lang zwischen 8:00 und 18:00 Uhr laufen soll. 
+Bei ausreichendem PV-Überschuss kann die Pumpe bis zu zwei weitere Stunden laufen, also insgesamt maximal 6 Stunden zwischen 8:00 und 18:00 Uhr. 
+
+
 
 ## Hinzufügen von neuen Geräten (in Sunny Portal)
 Nachdem die Geräte in Home Assitant angelegt wurden, müssen sie dem Sunny Portal hinzugefügt werden.

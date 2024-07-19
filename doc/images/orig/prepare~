@@ -1,0 +1,15 @@
+#!/bin/bash
+#sven@yoda-2023:~/devel/HomeAssistant/smasemp/doc/images/orig$ identify config-not-interruptible.png 
+
+
+# Y=603 717x1287
+convert -crop 717x684+0+603 -resize 350x config-not-interruptible.png ../config-not-interruptible.png
+
+# Y=1217 config-interruptible.png PNG 698x1501 
+convert -crop 698x284+0+1217 -resize 350x config-interruptible.png ../config-interruptible.png
+
+
+for i in sunnyportal-anlagenüberwachung.png
+do
+	convert -resize 700x $i ../$i 
+done

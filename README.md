@@ -30,18 +30,18 @@ In diese Integration wurde sehr viel Zeit investiert. Insbesondere wenn ihr durc
 
 HA-SMA-Semp ermöglicht die Einbindung beliebiger Geräte, die vom Home Assistant unterstützt werden, in das Sunny Portal von SMA mit Hilfe des Sunny Home Managers 2.0 ("SHM2"). Genutzt wird hierfür das SEMP-Protokoll.
 
-Im einfachsten Fall kann der Verbrauch der Geräte an den SHM2 gemeldet werden, so dass der Stromverbrauch der Geräte im Portal angezeigt wird. Das Gerät wird durch den SHM2 aber nicht gesteuert.
+Im einfachsten Fall kann der Verbrauch der Geräte an den SHM2 gemeldet werden, so dass der Stromverbrauch der Geräte im Portal angezeigt wird. Das Gerät wird durch den SHM2 aber nicht gesteuert. 
 
 ![energyusage](doc/images/energyusage.png)
 
-Jede Farbe in diesem Diagramm steht für den Stromverbrauch eines anderen Gerätes.
+Jede Farbe in diesem Diagramm steht für den Stromverbrauch eines anderen Gerätes. Das SEMP Proktoll unterstützt nur Verbraucher. Erzeuger können über diesen Weg nicht integriert werden.
 
 
 Im komplexeren Fall kann das Energiemanagement die Geräte aktiv steuern. Dazu wird z.B. festgelegt, wie lange das Gerät pro Tag laufen soll. Das SHM 2 schaltet das Gerät dann aktiv ein und aus, um das Gerät mit möglichst viel PV-Strom zu versorgen.
 
 ![planing](doc/images/planing.png)
  
- Unterschied werden hierbei Geräte, die bei ihrer Arbeit unterbrochen werden dürfen (z.B. Wasserpumpen) und Geräte, die durchlaufen müssen. 
+Unterschieden werden hierbei Geräte, die bei ihrer Arbeit unterbrochen werden dürfen (z.B. Wasserpumpen) und Geräte, die durchlaufen müssen. 
 
 
 Für mehr Informationen bzgl. SEMP und Geräteverwaltung sei auf die Kapitel 11 (Gerätevewrwaltung) und 13 (Visualisierung des Energiemanagements) in der (SHM 2.0 Anleitung)[https://www.sunnyportal.com/Documents/HM-20-BE-de-19.pdf] verwiesen.

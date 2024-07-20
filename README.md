@@ -1,3 +1,5 @@
+[Translation of this page via google translator](https://translate.google.com/translate?js=n&sl=auto&tl=en&u=https://github.com/littleyoda/ha-sma-semp)
+
 - [Vorbemerkung](#vorbemerkung)
 - [Einleitung](#einleitung)
 - [Installation](#installation)

@@ -44,7 +44,7 @@ Im komplexeren Fall kann das Energiemanagement die Geräte aktiv steuern. Dazu w
 Unterschieden werden hierbei Geräte, die bei ihrer Arbeit unterbrochen werden dürfen (z.B. Wasserpumpen) und Geräte, die durchlaufen müssen. 
 
 
-Für mehr Informationen bzgl. SEMP und Geräteverwaltung sei auf die Kapitel 11 (Gerätevewrwaltung) und 13 (Visualisierung des Energiemanagements) in der (SHM 2.0 Anleitung)[https://www.sunnyportal.com/Documents/HM-20-BE-de-19.pdf] verwiesen.
+Für mehr Informationen bzgl. SEMP und Geräteverwaltung sei auf die Kapitel 11 (Gerätevewrwaltung) und 13 (Visualisierung des Energiemanagements) in der [SHM 2.0 Anleitung](https://www.sunnyportal.com/Documents/HM-20-BE-de-19.pdf) verwiesen.
 
 
 # Installation
@@ -82,15 +82,15 @@ Drei Möglichkeiten stehen anschließend zur Auswahl:
 | _Min On Time_<br>Wie lange das Gerät mindestens eingeschaltet sein muss, <br> bevor es wieder ausgeschaltet werden darf.<br><br>_Min Off Time_<br>Wie lange das Gerät mindestens ausgeschaltet sein muss,<br> beovr es eingeschaltet werden darf. | [![Konfiguraiton für Stromverbrauch melden](doc/images/config-interruptible.png)](doc/images/orig/config-interruptible.png) |
 
 ## Kalendar Einträge
-Die Kalendereinträge werden verwendet, um dem Energiemanagementsystem (SHM2) mitzuteilen, in welchem Zeitraum die Geräte grundsätzlich laufen dürfen. Mit „Minimum running time“ und „Maximum running time“ wird festgelegt, wie lange die Geräte mindestens bzw. maximal laufen dürfen.
+Die Kalendereinträge werden verwendet, um dem Energiemanagementsystem (SHM2) mitzuteilen, in welchem Zeitraum die Geräte grundsätzlich laufen dürfen. Mit „Minimum running time“ und „Maximum running time“ wird festgelegt, wie lange die Geräte mindestens bzw. maximal in diesen Zeiträumen laufen dürfen.
 
-Die Kalendereinträge werden den einzelnen Geräten über den Title zugeordnet. Der Title der Kalendereinträge muss somit dem Gerätenamen übereinstimmen.
+Die Kalendereinträge werden den einzelnen Geräten über den Titel zugeordnet. Der Titel der Kalendereinträge muss somit mit dem Gerätenamen übereinstimmen.
 
 
 [![Kalendareinträge](doc/images/calendar.png)](doc/images/calendar.png)
 
 Beispiel: Durch den Kalendereintrag wird festgelegt, dass die Pumpe grundsätzlich zwischen 8:00 und 18:00 Uhr laufen darf. Durch „Minimale Laufzeit: 4 h“ und „Maximale Laufzeit: 6 h“ wird festgelegt, dass die Pumpe mindestens 4 Stunden lang zwischen 8:00 und 18:00 Uhr laufen soll. 
-Bei ausreichendem PV-Überschuss kann die Pumpe bis zu zwei weitere Stunden laufen, also insgesamt maximal 6 Stunden zwischen 8:00 und 18:00 Uhr. 
+Bei ausreichendem PV-Überschuss kann die Pumpe bis zu zwei weitere Stunden, also insgesamt maximal 6 Stunden zwischen 8:00 und 18:00 Uhr, laufen. 
 
 
 

@@ -25,7 +25,7 @@
 
 In diese Integration wurde sehr viel Zeit investiert. Insbesondere wenn ihr durch die Integration Stromkosten spart, würde ich mich freuen, wenn ihr euch in irgendeiner Form bedankt. Beispiele gibt es (hier)[https://littleyoda.github.io/].
 
-Diese Lösung wurde und wird von mir ohne Unterstützung von SMA entwickelt. Die von SMA zur Verfügung gestellte Dokumentation ist seit 2017 unverändert (Stand Juli 2024). Tools wie die XSD-Datei zur Überprüfung der XML-Dateien sind veraltet und spiegeln nicht mehr den aktuellen Stand der Protokollimplementierung durch SMA wider. Die Spezifikation ist leider in einigen Punkten unklar und in meinen Augen an einigen Stellen unglücklich gestaltet. So erhält das Gateway (=HA-SMA-SEMP) keine Information vom SHM2, wenn Einträge oder Zeiten nicht akzeptiert werden oder für wann die Betriebszeit des Gerätes geplant ist.
+Diese Lösung wurde und wird von mir ohne Unterstützung von SMA entwickelt. Die von SMA zur Verfügung gestellte Dokumentation ist seit 2017 unverändert (Stand Juli 2024). Tools, wie die XSD-Datei zur Überprüfung der XML-Dateien, sind veraltet und spiegeln nicht mehr den aktuellen Stand der Protokollimplementierung durch SMA wider. Die Spezifikation ist leider in einigen Punkten unklar und in meinen Augen an einigen Stellen unglücklich gestaltet. So erhält das Gateway (=HA-SMA-SEMP) keine Information vom SHM2, wenn Einträge oder Zeiten nicht akzeptiert werden oder für wann die Betriebszeit des Gerätes geplant ist.
 
 # Einleitung
 

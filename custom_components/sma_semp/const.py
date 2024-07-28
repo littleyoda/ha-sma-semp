@@ -2,7 +2,9 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from types import MappingProxyType
 from typing import Any
+import typing
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import Platform
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -12,6 +14,9 @@ from pysmaplus.semp import semp
 
 # from pysmaplus.device import
 from pysmaplus.semp.device import sempTimeframe, sempDevice
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "smasemp"
 CONF_SOURCE_SENSOR = "source"
@@ -29,6 +34,7 @@ CONF_MINOFFTIME = "minofftime"
 CONF_MINRUNNINGTIME = "minrunningtime"
 CONF_MAXRUNNINGTIME = "maxrunningtime"
 CONF_ONOFFSWITCH = "onoffswitch"
+CONF_PREFIX = "prefix"
 
 PORT = 13673
 SMASEMP_COORDINATOR = "coordinator"
@@ -43,6 +49,7 @@ ATTR_ENTITY = "entitystatus"
 ATTR_DEVICEID = "deviceid"
 
 MY_KEY: HassKey["SempIntegrationData"] = HassKey(DOMAIN)
+from dacite import from_dict
 
 
 @dataclass
@@ -71,9 +78,17 @@ class sensor_configuration:
     controllable: bool = False
     interruptable: bool = False
 
-    def set(self):
-        self.controllable = self.onoffswitch is not None
-        self.interruptable = self.minontime is not None and self.minofftime is not None
+    prefix: str | None = "11223344"
+
+    @staticmethod
+    def from_dict(values: MappingProxyType[str, Any]):
+        v = values.copy()
+        if "prefix" in v and isinstance(v["prefix"], float):
+            v["prefix"] = str(int(v["prefix"]))
+        c = from_dict(sensor_configuration, v)
+        c.controllable = c.onoffswitch is not None
+        c.interruptable = c.minontime is not None and c.minofftime is not None
+        return c
 
 
 @dataclass

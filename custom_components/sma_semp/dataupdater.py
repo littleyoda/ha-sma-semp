@@ -125,13 +125,15 @@ class sempCoordinator(DataUpdateCoordinator):
         ) = await self._getTimeFrameInformation(dev, now, cfg)
         dev.timeframes = timeframes
         status, powerUsage = self._getStatus(dev.device, cfg)
+        timeframestatus = None
 
         if dev.sensors_status:
             last_data = dev.sensors_status.extra_state_attributes
             timeframestatus = typing.cast(
                 timeframeStatus, last_data.get("currentTimeframe", timeframeStatus())
             )
-        else:
+
+        if timeframestatus is None:
             timeframestatus = timeframeStatus()
 
         if dev.sensors_status and controllable:
@@ -154,7 +156,8 @@ class sempCoordinator(DataUpdateCoordinator):
                 sameTimeFrame = timeframeId == timeframestatus.currentTimeframe
             if not sameTimeFrame:
                 # Outside of timeframe, reset counter
-                timeframestatus.activeCounter = 0
+                if timeframestatus is not None:
+                    timeframestatus.activeCounter = 0
                 if status == "on":
                     await switchOnOff(self.hass, dev.configdata.onoffswitch, False)
                     dev.history.append(
@@ -301,20 +304,24 @@ class sempCoordinator(DataUpdateCoordinator):
     async def sempcallback(self, d: callbackAction) -> None:
         """Callback from the pysma-plus-Library"""
         data = self.hass.data[MY_KEY]
-        if d.deviceid not in data.sendata:
-            _LOGGER.warning(f"Unknnown device {d.deviceid}")
+        if d.shortdeviceid not in data.sendata:
+            _LOGGER.warning(f"Unknnown device {d.deviceid} {d.shortdeviceid}")
             return
 
-        sendata = data.sendata[d.deviceid]
+        sendata = data.sendata[d.shortdeviceid]
         if sendata.configdata.onoffswitch is None:
-            _LOGGER.warning(f"No onoff switch for device {d.deviceid}")
+            _LOGGER.warning(
+                f"No onoff switch for device {d.deviceid} {d.shortdeviceid}"
+            )
             return
 
         if (
             sendata.switch_controllable is not None
             and not sendata.switch_controllable.is_on
         ):
-            _LOGGER.warning(f"Controllable is off for devices {d.deviceid}")
+            _LOGGER.warning(
+                f"Controllable is off for devices {d.deviceid} {d.shortdeviceid}"
+            )
             return
         status = "on" if d.requestedStatus else "off"
 

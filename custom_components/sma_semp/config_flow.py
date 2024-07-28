@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import logging
+from homeassistant.core import callback
 from typing import Any
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_ID, CONF_NAME
+from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
 
+from .config_options import SMASEMpOptionsConfigFlow
 from .config_flow_schema import _getSchema
 from .const import (
     DOMAIN,
@@ -24,6 +27,12 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize."""
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> SMASEMpOptionsConfigFlow:
+        """Get the options flow for this handler."""
+        return SMASEMpOptionsConfigFlow(config_entry)
 
     async def validate_input(self, user_input: dict[str, Any]) -> dict[str, str]:
         """Validate the user input"""

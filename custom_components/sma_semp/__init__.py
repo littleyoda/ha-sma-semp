@@ -9,7 +9,6 @@ from http import HTTPStatus
 from typing import Dict
 
 import aiohttp
-from dacite import from_dict
 from homeassistant.components import http
 from homeassistant.components.network import async_get_source_ip
 from homeassistant.config_entries import ConfigEntry
@@ -100,10 +99,11 @@ async def async_setup(
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Setup DeviceInfo and start creating sensors"""
-    sensorConfiguration = from_dict(sensor_configuration, entry.data)
-    sensorConfiguration.set()
+    # _LOGGER.error(f"{entry.data["prefix"]} {type(entry.data["prefix"])}")
+    sensorConfiguration = sensor_configuration.from_dict(entry.data)
     integrationData = hass.data[MY_KEY]
-    myId = f'{int(entry.data["id"]):08}'
+    prefix = f'{int(entry.data.get("prefix", "11223344")):8}'
+    myId = f'{int(entry.data["id"]):12}'
     device_info = DeviceInfo(
         configuration_url="http://"
         + str(integrationData.ip)
@@ -116,28 +116,39 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         name=entry.data["name"],
         sw_version="0.0.1",
     )
-    _LOGGER.error(f"Testing {sensorConfiguration.source} {sensorConfiguration.onoffswitch}")
+    _LOGGER.debug(
+        f"Setup Entry: Testing for {sensorConfiguration.source} {sensorConfiguration.onoffswitch}"
+    )
     if hass.states.get(sensorConfiguration.source) is None:
-         _LOGGER.error(f"source None")
-         raise ConfigEntryNotReady(f"Sensor {sensorConfiguration.source} not (yet) found for {sensorConfiguration.name}")
+        raise ConfigEntryNotReady(
+            f"Sensor {sensorConfiguration.source} not (yet) found for {sensorConfiguration.name}"
+        )
 
-    if sensorConfiguration.onoffswitch is not None and hass.states.get(sensorConfiguration.onoffswitch) is None:
-        _LOGGER.error(f"Testing")
-        raise ConfigEntryNotReady(f"Sensor {sensorConfiguration.onoffswitch} not (yet)  found for {sensorConfiguration.name}")
+    if (
+        sensorConfiguration.onoffswitch is not None
+        and hass.states.get(sensorConfiguration.onoffswitch) is None
+    ):
+        raise ConfigEntryNotReady(
+            f"Sensor {sensorConfiguration.onoffswitch} not (yet) found for {sensorConfiguration.name}"
+        )
 
     integrationData.sendata[myId] = SempDeviceInfo(
         myId, device_info, entry.unique_id, sensorConfiguration
     )
-    await createDevice(integrationData, myId)
+    await createDevice(integrationData, prefix, myId)
     await integrationData.coordinator.async_config_entry_first_refresh()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
 
 
-async def createDevice(data: SempIntegrationData, myId):
+async def createDevice(data: SempIntegrationData, prefix: str, myId: str):
     """Create a pysma.semp.device"""
-    devId = f"F-11223344-{myId}-00"
+    assert isinstance(prefix, str)
+    assert isinstance(myId, str)
+    assert len(myId) == 12
+    assert len(prefix) == 8
+    devId = f"F-{prefix}-{myId}-00"
     config = data.sendata[myId].configdata
     pysmaDev = sempDevice(
         devId,
@@ -160,7 +171,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.info("Unload ConfigEntry")
     if unload_ok:
         integrationData = hass.data[MY_KEY]
-        myId = f'{int(entry.data["id"]):08}'
+        myId = f'{int(entry.data["id"]):012}'
         x = integrationData.sendata.pop(myId)
         integrationData.sempserver.removeDevice(x.device)
     return unload_ok

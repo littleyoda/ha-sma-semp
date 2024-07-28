@@ -108,5 +108,52 @@
                 "title": "Configuration device control 1 "
             }
         }
+    },
+    "options": {
+        "step": {
+            "init": {
+              "title": "Update configuration",
+              "data": {
+                "id": "ID",
+                "name": "Name",
+                "source": "Sensor for Power Consumption 1",
+                "semptyp": "Device Type",
+                "sempmaxconsumption": "Max Power Consumption",
+
+                "sempminconsumption": "Min Power Consumption",
+                "minrunningtime": "Minimum running time",
+                "maxrunningtime": "Maximum running time",
+                "calendar": "Calendar with timeframes",
+                "onoffswitch": "On/Off switch",
+
+                "minontime": "Min On-Time",
+                "minofftime": "Min Off-Time",
+
+                "prefix": "Expert only. Prefix of the Device-ID"
+            },
+            "data_description": {
+                "minrunningtime": "Minimum running time within the timeframe specified in the calander.",
+                "maxrunningtime": "Maximum running time within the timeframe specified in the calander.",
+                "calendar": "The calendar defines the timeframe in which the device should run. The running time depends on the Minimum and Maxium running time.",
+                "minontime": "If the device is switched on, it has to remain on for at least this duration.",
+                "minofftime": "If the device is switched off, it has to remain off for at least this duration."
+           },
+          "description": "After a change, HA must be restarted manually.\n\n"
+           }
+        }
+    },
+    "issues": {
+        "restart_required": {
+            "title": "Restart required",
+            "fix_flow": {
+                "step": {
+                    "confirm_restart": {
+                        "title": "Restart required",
+                        "description": "Updating a device requires a restart of Home Assistant, click submit to restart now."
+                    }
+                }
+            }
+        }
     }
+
 }

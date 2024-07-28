@@ -1,6 +1,7 @@
 """ Schema for the config-flow """
 
 import random
+from typing import Any, Dict, List
 
 import voluptuous as vol
 from homeassistant.components.calendar import DOMAIN as CALENDER_DOMAIN
@@ -13,6 +14,10 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import selector
 from homeassistant.helpers.selector import SelectSelectorConfig, SelectSelectorMode
 from pysmaplus.semp import sempDevice
+import logging
+
+_LOGGER = logging.getLogger(__name__)
+
 
 from .const import (
     CONF_CALENDAR,
@@ -22,6 +27,7 @@ from .const import (
     CONF_MINONTIME,
     CONF_MINRUNNINGTIME,
     CONF_ONOFFSWITCH,
+    CONF_PREFIX,
     CONF_SOURCE_MAXCONSUMPTION,
     CONF_SOURCE_MINCONSUMPTION,
     CONF_SOURCE_SENSOR,
@@ -30,9 +36,30 @@ from .const import (
 ALLOWED_DOMAINS = [INPUT_NUMBER_DOMAIN, SENSOR_DOMAIN]
 
 
-def _getSchema(hass: HomeAssistant, include: int):
+def _getConfElemente() -> List[str]:
+    return [
+        CONF_CALENDAR,
+        CONF_DEVICE_TYP,
+        CONF_ID,
+        CONF_MAXRUNNINGTIME,
+        CONF_MINONTIME,
+        CONF_MINRUNNINGTIME,
+        CONF_NAME,
+        CONF_ONOFFSWITCH,
+        CONF_SOURCE_MAXCONSUMPTION,
+        CONF_SOURCE_MINCONSUMPTION,
+        CONF_SOURCE_SENSOR,
+        CONF_PREFIX,
+    ]
+
+
+def _getSchema(
+    hass: HomeAssistant,
+    include: int,
+    values: Dict[str, Any] = {},
+    reConfiguration: bool = False,
+):
     """Basis Information"""
-    semp_id = random.randrange(100000000000, 999999999999)
 
     entitiesPowerUsage = [
         ent.entity_id
@@ -49,42 +76,69 @@ def _getSchema(hass: HomeAssistant, include: int):
 
     schema = vol.Schema(
         {
-            vol.Required(CONF_NAME): selector.TextSelector(),
-            vol.Required(CONF_SOURCE_SENSOR): selector.EntitySelector(
+            vol.Required(
+                CONF_NAME, default=values.get(CONF_NAME, "")
+            ): selector.TextSelector(),
+            vol.Required(
+                CONF_SOURCE_SENSOR, default=values.get(CONF_SOURCE_SENSOR, None)
+            ): selector.EntitySelector(
                 selector.EntitySelectorConfig(include_entities=entitiesPowerUsage)
             ),
-            vol.Required(CONF_DEVICE_TYP): selector.SelectSelector(
+            vol.Required(
+                CONF_DEVICE_TYP, default=values.get(CONF_DEVICE_TYP, None)
+            ): selector.SelectSelector(
                 SelectSelectorConfig(
                     options=sempDevice.possibleDeviceType(),
                     mode=SelectSelectorMode.DROPDOWN,
                 )
             ),
-            vol.Optional(CONF_ID, default=semp_id): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=1000000,
-                    max=999999999999,
-                    step=1,
-                    mode=selector.NumberSelectorMode.BOX,
-                ),
-            ),
-            vol.Optional(
-                CONF_SOURCE_MAXCONSUMPTION, default=2000
-            ): selector.NumberSelector(
-                selector.NumberSelectorConfig(
-                    min=0,
-                    max=10000,
-                    step=1,
-                    mode=selector.NumberSelectorMode.BOX,
-                ),
-            ),
         }
+    )
+    if not reConfiguration:
+        schema = schema.extend(
+            vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_ID,
+                        default=values.get(
+                            CONF_ID, random.randrange(100000000000, 999999999999)
+                        ),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=999999999999,
+                            step=1,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    )
+                }
+            ).schema
+        )
+
+    schema = schema.extend(
+        vol.Schema(
+            {
+                vol.Optional(
+                    CONF_SOURCE_MAXCONSUMPTION,
+                    default=values.get(CONF_SOURCE_MAXCONSUMPTION, 2000),
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0,
+                        max=10000,
+                        step=1,
+                        mode=selector.NumberSelectorMode.BOX,
+                    ),
+                )
+            }
+        ).schema
     )
     if include > 0:
         schema = schema.extend(
             vol.Schema(
                 {
                     vol.Required(
-                        CONF_SOURCE_MINCONSUMPTION, default=2000
+                        CONF_SOURCE_MINCONSUMPTION,
+                        default=values.get(CONF_SOURCE_MINCONSUMPTION, 2000),
                     ): selector.NumberSelector(
                         selector.NumberSelectorConfig(
                             min=0,
@@ -94,15 +148,22 @@ def _getSchema(hass: HomeAssistant, include: int):
                         ),
                     ),
                     vol.Optional(
-                        CONF_MINRUNNINGTIME, default={"hours": 1}
+                        CONF_MINRUNNINGTIME,
+                        default=values.get(CONF_MINRUNNINGTIME, {"hours": 1}),
                     ): selector.DurationSelector(selector.DurationSelectorConfig()),
                     vol.Optional(
-                        CONF_MAXRUNNINGTIME, default={"hours": 1}
+                        CONF_MAXRUNNINGTIME,
+                        default=values.get(CONF_MAXRUNNINGTIME, {"hours": 1}),
                     ): selector.DurationSelector(selector.DurationSelectorConfig()),
-                    vol.Required(CONF_CALENDAR): selector.EntitySelector(
+                    vol.Required(
+                        CONF_CALENDAR, default=values.get(CONF_CALENDAR, None)
+                    ): selector.EntitySelector(
                         selector.EntitySelectorConfig(include_entities=entitiesCalendar)
                     ),
-                    vol.Required(CONF_ONOFFSWITCH): selector.EntitySelector(
+                    vol.Required(
+                        CONF_ONOFFSWITCH,
+                        default=values.get(CONF_ONOFFSWITCH, None),
+                    ): selector.EntitySelector(
                         selector.EntitySelectorConfig(include_entities=entitiesSwitch)
                     ),
                 }
@@ -125,5 +186,23 @@ def _getSchema(hass: HomeAssistant, include: int):
         #
         # min Ausschaltdauer
         # Max Ausschaltdauer
+
+    if reConfiguration:
+        schema = schema.extend(
+            vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_PREFIX, default=values.get(CONF_PREFIX, "11223344")
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=0,
+                            max=10**8 - 1,
+                            step=1,
+                            mode=selector.NumberSelectorMode.BOX,
+                        ),
+                    )
+                }
+            ).schema
+        )
 
     return schema

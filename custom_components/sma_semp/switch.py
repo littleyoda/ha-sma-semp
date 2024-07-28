@@ -32,7 +32,7 @@ async def async_setup_entry(
     #    hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Setup Switch Entity"""
-    myId = f'{int(config_entry.data["id"]):08}'
+    myId = f'{int(config_entry.data["id"]):12}'
     data = hass.data[MY_KEY]
     sensordata = data.sendata[myId]
     config = sensordata.configdata

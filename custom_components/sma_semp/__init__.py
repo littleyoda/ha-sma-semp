@@ -102,8 +102,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # _LOGGER.error(f"{entry.data["prefix"]} {type(entry.data["prefix"])}")
     sensorConfiguration = sensor_configuration.from_dict(entry.data)
     integrationData = hass.data[MY_KEY]
-    prefix = f'{int(entry.data.get("prefix", "11223344")):8}'
-    myId = f'{int(entry.data["id"]):12}'
+    prefix = f'{int(entry.data.get("prefix", "11223344")):08}'
+    myId = f'{int(entry.data["id"]):012}'
     device_info = DeviceInfo(
         configuration_url="http://"
         + str(integrationData.ip)
@@ -150,6 +150,7 @@ async def createDevice(data: SempIntegrationData, prefix: str, myId: str):
     assert len(prefix) == 8
     devId = f"F-{prefix}-{myId}-00"
     config = data.sendata[myId].configdata
+    _LOGGER.error(f"ID: {devId} {prefix} {myId} {type(prefix)} {type(myId)}")
     pysmaDev = sempDevice(
         devId,
         config.name,

@@ -252,7 +252,7 @@ class sempCoordinator(DataUpdateCoordinator):
         if "description" in e and (desc := e["description"]) != "":
             try:
                 values = parse_yaml(desc)
-                _LOGGER.error(values)
+#                _LOGGER.error(values)
             except HomeAssistantError as exc:
                 print("ERROR", exc)
         return values

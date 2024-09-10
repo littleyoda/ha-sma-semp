@@ -13,7 +13,7 @@ from homeassistant.util import dt as dt_util
 from homeassistant.util.yaml import parse_yaml
 from homeassistant.exceptions import HomeAssistantError
 from pysmaplus.semp.const import callbackAction
-from pysmaplus.semp.device import sempTimeframe
+from pysmaplus.semp.device import sempTimeframe, sempDevice
 
 from .const import MY_KEY, SempDeviceInfo
 from .helper import switchOnOff
@@ -80,7 +80,7 @@ class sempCoordinator(DataUpdateCoordinator):
             status = "offline"
         elif sensor.state == "unknown":
             value = 0
-            status = "unknown"
+            status = "offline"
         else:
             value = int(float(sensor.state))
             if sensor.attributes.get(ATTR_UNIT_OF_MEASUREMENT, "") == "kW":
@@ -182,6 +182,14 @@ class sempCoordinator(DataUpdateCoordinator):
                         0,
                         withInTimeFrame.maxRunningTime - timeframestatus.activeCounter,
                     )
+                    if status == "on" and withInTimeFrame.maxRunningTime == 0:
+                            await switchOnOff(self.hass, dev.configdata.onoffswitch, False)
+                            dev.history.append(
+                                {
+                                    "time": datetime.now().isoformat()[0:19],
+                                    "event": "turn off (end of maxRunningTime)",
+                                }
+                            )
             timeframestatus.currentTimeframe = timeframeId
             timeframestatus.currentTime = now
             _LOGGER.debug(

@@ -50,6 +50,7 @@ ATTR_DEVICEID = "deviceid"
 
 MY_KEY: HassKey["SempIntegrationData"] = HassKey(DOMAIN)
 from dacite import from_dict
+from dataclasses import asdict
 
 
 @dataclass
@@ -107,6 +108,25 @@ class SempDeviceInfo:
     history: list[dict] = field(default_factory=list)
     last_start: None | datetime = None
     running_time: int = 0
+
+    def asdict(self):
+        d = {
+            "device_info": self.device_info,
+            "unique_id": self.unique_id,
+            "device": self.device,
+            "sensors_status": self.sensors_status,
+            "switch_controllable": self.switch_controllable,
+            "switch_interruptable": self.switch_interruptable,
+            "timeframes": [],
+            "history": self.history,
+            "last_start": self.last_start,
+            "running_time":self.running_time
+        }
+        if self.timeframes:
+            for x in self.timeframes:
+                d["timeframes"].append(x)
+        d["configdata"] = asdict(self.configdata)
+        return d
 
 
 @dataclass

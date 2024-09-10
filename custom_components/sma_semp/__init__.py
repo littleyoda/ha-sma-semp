@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from http import HTTPStatus
-from typing import Dict
 
 import aiohttp
 from homeassistant.components import http
@@ -150,7 +148,7 @@ async def createDevice(data: SempIntegrationData, prefix: str, myId: str):
     assert len(prefix) == 8
     devId = f"F-{prefix}-{myId}-00"
     config = data.sendata[myId].configdata
-    _LOGGER.error(f"ID: {devId} {prefix} {myId} {type(prefix)} {type(myId)}")
+    _LOGGER.info(f"ID: {devId} {prefix} {myId} {type(prefix)} {type(myId)}")
     pysmaDev = sempDevice(
         devId,
         config.name,

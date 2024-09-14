@@ -92,11 +92,12 @@ async def async_get_config_entry_diagnostics(
     for h in x["history"]:
         hh = asdict(h)
         hh["deviceData"] = {}
-        for key,item in h.deviceData.items():
-            if isinstance(item, sempDevice):
-                hh["deviceData"][key] = [item.power, item.status]
-            else:
-                hh["deviceData"][key] = item.power
+        if h.deviceData is not None:
+            for key,item in h.deviceData.items():
+                if isinstance(item, sempDevice):
+                    hh["deviceData"][key] = [item.power, item.status]
+                else:
+                    hh["deviceData"][key] = item.power
 
         diag["history"].append(hh)
     return async_redact_data(diag, REDACT_KEYS)

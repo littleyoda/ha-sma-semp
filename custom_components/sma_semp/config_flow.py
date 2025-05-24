@@ -107,42 +107,34 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Reconfigure an existing entry."""
+        errors = {}
         reconfigure_entry = self._get_reconfigure_entry()
 
-        if user_input is None:
-            _LOGGER.error(f"Values {reconfigure_entry.data}")
-            schema_typ = 0
-            if reconfigure_entry.data.get("minontime", None) is not None:
-                schema_typ = 1
-            if reconfigure_entry.data.get("onoffswitch", None) is not None:
-                schema_typ = 2
+        _LOGGER.error(f"Values {reconfigure_entry.data}")
+        schema_typ = 0
+        if reconfigure_entry.data.get("minontime", None) is not None:
+            schema_typ = 1
+        if reconfigure_entry.data.get("onoffswitch", None) is not None:
+            schema_typ = 2
 
-            _LOGGER.error(f"Default-Values {reconfigure_entry.data}")
-            return self.async_show_form(
-                step_id="reconfigure",
-                data_schema=self.add_suggested_values_to_schema(
-                    _getSchema(
-                        self.hass,
-                        schema_typ,
-                        cast(dict[str, Any], reconfigure_entry.data),
-                    ),
-                    reconfigure_entry.data,
-                ),
-            )
+        if user_input is not None:
+            _LOGGER.error(f"User_input  {user_input}")
+            self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+            self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
 
-        _LOGGER.error(f"User_input  {user_input}")
-        self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
-        self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
-
-        if (errors := await self.validate_input(user_input)) == {}:
-            return self.async_update_reload_and_abort(
-                reconfigure_entry, data_updates=user_input
-            )
+            if (errors := await self.validate_input(user_input)) == {}:
+                return self.async_update_reload_and_abort(
+                    reconfigure_entry, data_updates=user_input
+                )
 
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=self.add_suggested_values_to_schema(
-                _getSchema(self.hass, schema_typ, user_input),
+                _getSchema(
+                    self.hass,
+                    schema_typ,
+                    cast(dict[str, Any], reconfigure_entry.data),
+                ),
                 reconfigure_entry.data,
             ),
             errors=errors,

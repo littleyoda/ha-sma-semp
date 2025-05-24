@@ -3,19 +3,13 @@
 from __future__ import annotations
 
 import logging
-from homeassistant.core import callback
-from typing import Any
+from typing import Any, cast
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_ID, CONF_NAME
-from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
+from homeassistant.const import CONF_ID, CONF_NAME, CONF_PREFIX
 
-from .config_options import SMASEMpOptionsConfigFlow
 from .config_flow_schema import _getSchema
-from .const import (
-    DOMAIN,
-    MY_KEY,
-)
+from .const import DOMAIN, MY_KEY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,15 +19,6 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    def __init__(self) -> None:
-        """Initialize."""
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> SMASEMpOptionsConfigFlow:
-        """Get the options flow for this handler."""
-        return SMASEMpOptionsConfigFlow(config_entry)
-
     async def validate_input(self, user_input: dict[str, Any]) -> dict[str, str]:
         """Validate the user input"""
         errors: dict[str, str] = {}
@@ -41,17 +26,6 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         if MY_KEY not in self.hass.data:
             # No other device created yet
             return errors
-
-        # Check for duplicate IDs
-        data = self.hass.data[MY_KEY]
-        if str(int(user_input[CONF_ID])) in data.sendata:
-            errors["base"] = "dupe id"
-
-        # Check for duplicate names
-        name = user_input[CONF_NAME].lower()
-        for dev in data.sendata.values():
-            if name == dev.configdata.name.lower():
-                errors["base"] = "dupe name"
         return errors
 
     async def async_step_user(
@@ -72,6 +46,9 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         """Configuration for report energy usage only"""
         errors: dict[str, str] = {}
         if user_input is not None:
+            self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+            self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
+
             errors = await self.validate_input(user_input)
             if not errors:
                 return self.async_create_entry(
@@ -90,6 +67,9 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         """Configuration for controllable devices"""
         errors: dict[str, str] = {}
         if user_input is not None:
+            self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+            self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
+
             errors = await self.validate_input(user_input)
             if not errors:
                 return self.async_create_entry(
@@ -108,6 +88,9 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         """Configuration for controllable and interruptable devices"""
         errors: dict[str, str] = {}
         if user_input is not None:
+            self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+            self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
+
             errors = await self.validate_input(user_input)
             if not errors:
                 return self.async_create_entry(
@@ -117,5 +100,51 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="energyusagecontrollableinterruptable",
             data_schema=_getSchema(self.hass, 2),
+            errors=errors,
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Reconfigure an existing entry."""
+        reconfigure_entry = self._get_reconfigure_entry()
+
+        if user_input is None:
+            _LOGGER.error(f"Values {reconfigure_entry.data}")
+            schema_typ = 0
+            if reconfigure_entry.data.get("minontime", None) is not None:
+                schema_typ = 1
+            if reconfigure_entry.data.get("onoffswitch", None) is not None:
+                schema_typ = 2
+
+            _LOGGER.error(f"Default-Values {reconfigure_entry.data}")
+            return self.async_show_form(
+                step_id="reconfigure",
+                data_schema=self.add_suggested_values_to_schema(
+                    _getSchema(
+                        self.hass,
+                        schema_typ,
+                        cast(dict[str, Any], reconfigure_entry.data),
+                        True,
+                    ),
+                    reconfigure_entry.data,
+                ),
+            )
+
+        _LOGGER.error(f"User_input  {user_input}")
+        self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
+        self._async_abort_entries_match({CONF_PREFIX: user_input[CONF_PREFIX]})
+
+        if (errors := await self.validate_input(user_input)) == {}:
+            return self.async_update_reload_and_abort(
+                reconfigure_entry, data_updates=user_input
+            )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=self.add_suggested_values_to_schema(
+                _getSchema(self.hass, schema_typ, user_input, True),
+                reconfigure_entry.data,
+            ),
             errors=errors,
         )

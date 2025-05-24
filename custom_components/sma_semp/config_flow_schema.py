@@ -1,9 +1,12 @@
-""" Schema for the config-flow """
+"""Schema for the config-flow"""
 
+import logging
 import random
 from typing import Any, Dict, List
 
+from pysmaplus.semp import sempDevice
 import voluptuous as vol
+
 from homeassistant.components.calendar import DOMAIN as CALENDER_DOMAIN
 from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN_DOMAIN
 from homeassistant.components.input_number import DOMAIN as INPUT_NUMBER_DOMAIN
@@ -13,8 +16,6 @@ from homeassistant.const import ATTR_UNIT_OF_MEASUREMENT, CONF_ID, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import selector
 from homeassistant.helpers.selector import SelectSelectorConfig, SelectSelectorMode
-from pysmaplus.semp import sempDevice
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,23 +35,6 @@ from .const import (
 )
 
 ALLOWED_DOMAINS = [INPUT_NUMBER_DOMAIN, SENSOR_DOMAIN]
-
-
-def _getConfElemente() -> List[str]:
-    return [
-        CONF_CALENDAR,
-        CONF_DEVICE_TYP,
-        CONF_ID,
-        CONF_MAXRUNNINGTIME,
-        CONF_MINONTIME,
-        CONF_MINRUNNINGTIME,
-        CONF_NAME,
-        CONF_ONOFFSWITCH,
-        CONF_SOURCE_MAXCONSUMPTION,
-        CONF_SOURCE_MINCONSUMPTION,
-        CONF_SOURCE_SENSOR,
-        CONF_PREFIX,
-    ]
 
 
 def _getSchema(

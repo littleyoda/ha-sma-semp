@@ -6,7 +6,7 @@ import logging
 from typing import Any, cast
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_ID, CONF_NAME, CONF_PREFIX
+from homeassistant.const import CONF_ID, CONF_NAME
 
 from .config_flow_schema import _getSchema
 from .const import DOMAIN, MY_KEY
@@ -125,7 +125,6 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
                         self.hass,
                         schema_typ,
                         cast(dict[str, Any], reconfigure_entry.data),
-                        True,
                     ),
                     reconfigure_entry.data,
                 ),
@@ -133,7 +132,7 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
 
         _LOGGER.error(f"User_input  {user_input}")
         self._async_abort_entries_match({CONF_NAME: user_input[CONF_NAME]})
-        self._async_abort_entries_match({CONF_PREFIX: user_input[CONF_PREFIX]})
+        self._async_abort_entries_match({CONF_ID: user_input[CONF_ID]})
 
         if (errors := await self.validate_input(user_input)) == {}:
             return self.async_update_reload_and_abort(
@@ -143,7 +142,7 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=self.add_suggested_values_to_schema(
-                _getSchema(self.hass, schema_typ, user_input, True),
+                _getSchema(self.hass, schema_typ, user_input),
                 reconfigure_entry.data,
             ),
             errors=errors,

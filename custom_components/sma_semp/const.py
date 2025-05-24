@@ -2,19 +2,21 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
+import logging
 from types import MappingProxyType
-from typing import Any
 import typing
+from typing import Any
+
+from pysmaplus.semp import semp
+
+# from pysmaplus.device import
+from pysmaplus.semp.device import sempDevice, sempTimeframe
+
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import Platform
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util.hass_dict import HassKey
-from pysmaplus.semp import semp
-
-# from pysmaplus.device import
-from pysmaplus.semp.device import sempTimeframe, sempDevice
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +36,6 @@ CONF_MINOFFTIME = "minofftime"
 CONF_MINRUNNINGTIME = "minrunningtime"
 CONF_MAXRUNNINGTIME = "maxrunningtime"
 CONF_ONOFFSWITCH = "onoffswitch"
-CONF_PREFIX = "prefix"
 
 PORT = 13673
 SMASEMP_COORDINATOR = "coordinator"
@@ -49,8 +50,9 @@ ATTR_ENTITY = "entitystatus"
 ATTR_DEVICEID = "deviceid"
 
 MY_KEY: HassKey["SempIntegrationData"] = HassKey(DOMAIN)
-from dacite import from_dict
 from dataclasses import asdict
+
+from dacite import from_dict
 
 
 @dataclass
@@ -120,7 +122,7 @@ class SempDeviceInfo:
             "timeframes": [],
             "history": self.history,
             "last_start": self.last_start,
-            "running_time":self.running_time
+            "running_time": self.running_time,
         }
         if self.timeframes:
             for x in self.timeframes:

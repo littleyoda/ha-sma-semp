@@ -134,7 +134,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         myId, device_info, entry.unique_id, sensorConfiguration
     )
     await createDevice(integrationData, prefix, myId)
-    await integrationData.coordinator.async_config_entry_first_refresh()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True

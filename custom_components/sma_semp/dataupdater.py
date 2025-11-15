@@ -297,9 +297,16 @@ class sempCoordinator(DataUpdateCoordinator):
                     )
                     s = datetime.fromisoformat(e["start"])
                     e = datetime.fromisoformat(e["end"])
+                    
+                    # Ensure timezone consistency for comparison
+                    if s.tzinfo is None:
+                        s = s.replace(tzinfo=now.tzinfo)
+                    if e.tzinfo is None:
+                        e = e.replace(tzinfo=now.tzinfo)
+                    
                     t = sempTimeframe(s, e, mintr, maxtr)
                     timeframes.append(t)
-                    if s < now < e:
+                    if s <= now <= e:
                         withInTimeFrame = t
             interruptable = (
                 cfg.interruptable

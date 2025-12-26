@@ -32,7 +32,7 @@ class SempConfigFlowHandler(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry) -> SMASEMpOptionsConfigFlow:
         """Get the options flow for this handler."""
-        return SMASEMpOptionsConfigFlow(config_entry)
+        return SMASEMpOptionsConfigFlow()
 
     async def validate_input(self, user_input: dict[str, Any]) -> dict[str, str]:
         """Validate the user input"""

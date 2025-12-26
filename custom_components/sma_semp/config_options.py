@@ -1,15 +1,13 @@
-from typing import Any, Dict, cast
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_ID, CONF_NAME
-from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
-import voluptuous as vol
-from homeassistant import config_entries, core
-from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
-from homeassistant.helpers import issue_registry as ir
-from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
-from .config_flow_schema import _getSchema, _getConfElemente
-from .const import DOMAIN
 import logging
+from typing import Any, Dict, cast
+
+from homeassistant import config_entries
+from homeassistant.const import CONF_ID
+from homeassistant.helpers import issue_registry as ir
+from homeassistant.helpers.issue_registry import IssueSeverity
+
+from .config_flow_schema import _getConfElemente, _getSchema
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,9 +15,8 @@ _LOGGER = logging.getLogger(__name__)
 class SMASEMpOptionsConfigFlow(config_entries.OptionsFlow):
     """Handle a pyscript options flow."""
 
-    def __init__(self, config_entry: ConfigEntry) -> None:
+    def __init__(self) -> None:
         """Initialize pyscript options flow."""
-        self.config_entry = config_entry
         self._show_form = False
 
     async def async_step_init(

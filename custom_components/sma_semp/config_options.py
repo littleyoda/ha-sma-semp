@@ -24,15 +24,12 @@ class SMASEMpOptionsConfigFlow(config_entries.OptionsFlow):
     ) -> Dict[str, Any]:
         """Manage the pyscript options."""
         if user_input is None:
-            _LOGGER.error(f"Values {self.config_entry.data}")
             schemaTyp = 0
-            if self.config_entry.data.get("minontime", None) is not None:
-                schemaTyp = 1
             if self.config_entry.data.get("onoffswitch", None) is not None:
+                schemaTyp = 1
+            if self.config_entry.data.get("minontime", None) is not None:
                 schemaTyp = 2
-
-            #            self.config_entry.
-            _LOGGER.error(f"Default-Values {self.config_entry.data}")
+            _LOGGER.debug(f"SchemaType {schemaTyp} Values {self.config_entry.data}")
             return self.async_show_form(
                 step_id="init",
                 data_schema=_getSchema(
@@ -52,13 +49,14 @@ class SMASEMpOptionsConfigFlow(config_entries.OptionsFlow):
                 # ),
             )
 
-        _LOGGER.error(f"User_input  {user_input}")
+        _LOGGER.debug(f"User_input  {user_input}")
         if any(
             parameterName not in self.config_entry.data
-            or user_input[parameterName] != self.config_entry.data[parameterName]
+            or user_input.get(parameterName) != self.config_entry.data[parameterName]
             for parameterName in _getConfElemente()
+            if parameterName in user_input
         ):
-            _LOGGER.error(f"Update started")
+            _LOGGER.debug(f"Update started")
             updated_data = self.config_entry.data.copy()
             updated_data.update(user_input)
             self.hass.config_entries.async_update_entry(

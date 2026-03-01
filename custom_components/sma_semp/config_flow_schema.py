@@ -42,6 +42,7 @@ def _getConfElemente() -> List[str]:
         CONF_DEVICE_TYP,
         CONF_ID,
         CONF_MAXRUNNINGTIME,
+        CONF_MINOFFTIME,
         CONF_MINONTIME,
         CONF_MINRUNNINGTIME,
         CONF_NAME,
@@ -124,7 +125,7 @@ def _getSchema(
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         min=0,
-                        max=10000,
+                        max=15000,
                         step=1,
                         mode=selector.NumberSelectorMode.BOX,
                     ),
@@ -175,10 +176,12 @@ def _getSchema(
             vol.Schema(
                 {
                     vol.Optional(
-                        CONF_MINONTIME, default={"minutes": 1}
+                        CONF_MINONTIME,
+                        default=values.get(CONF_MINONTIME, {"minutes": 1}),
                     ): selector.DurationSelector(selector.DurationSelectorConfig()),
                     vol.Optional(
-                        CONF_MINOFFTIME, default={"minutes": 1}
+                        CONF_MINOFFTIME,
+                        default=values.get(CONF_MINOFFTIME, {"minutes": 1}),
                     ): selector.DurationSelector(selector.DurationSelectorConfig()),
                 }
             ).schema

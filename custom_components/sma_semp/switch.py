@@ -74,10 +74,10 @@ async def async_setup_entry(
         sensordata.switch_interruptable = s
         sensors.append(s)
 
-    _LOGGER.error(f"sensors {sensors}")
-    _LOGGER.error(f"sensordata {sensordata}")
+    _LOGGER.debug(f"sensors {sensors}")
+    _LOGGER.debug(f"sensordata {sensordata}")
     if sensors:
-        _LOGGER.error(f"Adding sensors {sensors}")
+        _LOGGER.debug(f"Adding sensors {sensors}")
         async_add_entities(sensors)
 
 

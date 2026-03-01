@@ -125,7 +125,7 @@ def _getSchema(
                 ): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         min=0,
-                        max=15000,
+                        max=22000,
                         step=1,
                         mode=selector.NumberSelectorMode.BOX,
                     ),

@@ -129,17 +129,22 @@
                 "minontime": "Min On-Time",
                 "minofftime": "Min Off-Time",
 
-                "prefix": "Expert only. Prefix of the Device-ID"
+                "prefix": "Expert only. Prefix of the Device-ID",
+                "deviceserial": "Expert only. Device serial reported via SEMP"
             },
             "data_description": {
                 "minrunningtime": "Minimum running time within the timeframe specified in the calander.",
                 "maxrunningtime": "Maximum running time within the timeframe specified in the calander.",
                 "calendar": "The calendar defines the timeframe in which the device should run. The running time depends on the Minimum and Maxium running time.",
                 "minontime": "If the device is switched on, it has to remain on for at least this duration.",
-                "minofftime": "If the device is switched off, it has to remain off for at least this duration."
+                "minofftime": "If the device is switched off, it has to remain off for at least this duration.",
+                "deviceserial": "Independent serial number in the SEMP DeviceSerial field. Leave it different from the Device-ID serial part if the energy manager requires that."
            },
           "description": "After a change, HA must be restarted manually.\n\n"
            }
+        },
+        "error": {
+            "invalid_device_serial": "Device serial must not be empty"
         }
     },
     "issues": {

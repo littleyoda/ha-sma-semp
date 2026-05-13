@@ -21,6 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 from .const import (
     CONF_CALENDAR,
+    CONF_DEVICE_SERIAL,
     CONF_DEVICE_TYP,
     CONF_MAXRUNNINGTIME,
     CONF_MINOFFTIME,
@@ -31,6 +32,7 @@ from .const import (
     CONF_SOURCE_MAXCONSUMPTION,
     CONF_SOURCE_MINCONSUMPTION,
     CONF_SOURCE_SENSOR,
+    normalize_device_serial,
 )
 
 ALLOWED_DOMAINS = [INPUT_NUMBER_DOMAIN, SENSOR_DOMAIN]
@@ -51,6 +53,7 @@ def _getConfElemente() -> List[str]:
         CONF_SOURCE_MINCONSUMPTION,
         CONF_SOURCE_SENSOR,
         CONF_PREFIX,
+        CONF_DEVICE_SERIAL,
     ]
 
 
@@ -191,6 +194,9 @@ def _getSchema(
         # Max Ausschaltdauer
 
     if reConfiguration:
+        device_serial = normalize_device_serial(values.get(CONF_DEVICE_SERIAL))
+        if not device_serial:
+            device_serial = normalize_device_serial(values.get(CONF_ID))
         schema = schema.extend(
             vol.Schema(
                 {
@@ -203,6 +209,13 @@ def _getSchema(
                             step=1,
                             mode=selector.NumberSelectorMode.BOX,
                         ),
+                    ),
+                    vol.Required(
+                        CONF_DEVICE_SERIAL, default=device_serial
+                    ): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.TEXT,
+                        )
                     )
                 }
             ).schema

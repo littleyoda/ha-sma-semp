@@ -7,7 +7,7 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.issue_registry import IssueSeverity
 
 from .config_flow_schema import _getConfElemente, _getSchema
-from .const import DOMAIN
+from .const import CONF_DEVICE_SERIAL, DOMAIN, normalize_device_serial
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,16 +19,20 @@ class SMASEMpOptionsConfigFlow(config_entries.OptionsFlow):
         """Initialize pyscript options flow."""
         self._show_form = False
 
+    def _schema_type(self) -> int:
+        schemaTyp = 0
+        if self.config_entry.data.get("onoffswitch", None) is not None:
+            schemaTyp = 1
+        if self.config_entry.data.get("minontime", None) is not None:
+            schemaTyp = 2
+        return schemaTyp
+
     async def async_step_init(
         self, user_input: Dict[str, Any] | None = None
     ) -> Dict[str, Any]:
         """Manage the pyscript options."""
+        schemaTyp = self._schema_type()
         if user_input is None:
-            schemaTyp = 0
-            if self.config_entry.data.get("onoffswitch", None) is not None:
-                schemaTyp = 1
-            if self.config_entry.data.get("minontime", None) is not None:
-                schemaTyp = 2
             _LOGGER.debug(f"SchemaType {schemaTyp} Values {self.config_entry.data}")
             return self.async_show_form(
                 step_id="init",
@@ -50,12 +54,40 @@ class SMASEMpOptionsConfigFlow(config_entries.OptionsFlow):
             )
 
         _LOGGER.debug(f"User_input  {user_input}")
-        if any(
-            parameterName not in self.config_entry.data
-            or user_input.get(parameterName) != self.config_entry.data[parameterName]
-            for parameterName in _getConfElemente()
-            if parameterName in user_input
-        ):
+        user_input[CONF_DEVICE_SERIAL] = normalize_device_serial(
+            user_input.get(CONF_DEVICE_SERIAL)
+        )
+        if not user_input[CONF_DEVICE_SERIAL]:
+            return self.async_show_form(
+                step_id="init",
+                data_schema=_getSchema(self.hass, schemaTyp, user_input, True),
+                errors={CONF_DEVICE_SERIAL: "invalid_device_serial"},
+            )
+
+        current_device_serial = normalize_device_serial(
+            self.config_entry.data.get(CONF_DEVICE_SERIAL)
+        )
+        if not current_device_serial:
+            current_device_serial = normalize_device_serial(
+                self.config_entry.data.get(CONF_ID)
+            )
+
+        has_changes = False
+        for parameterName in _getConfElemente():
+            if parameterName not in user_input:
+                continue
+            if parameterName == CONF_DEVICE_SERIAL:
+                if user_input[parameterName] != current_device_serial:
+                    has_changes = True
+                    break
+            elif (
+                parameterName not in self.config_entry.data
+                or user_input.get(parameterName) != self.config_entry.data[parameterName]
+            ):
+                has_changes = True
+                break
+
+        if has_changes:
             _LOGGER.debug(f"Update started")
             updated_data = self.config_entry.data.copy()
             updated_data.update(user_input)

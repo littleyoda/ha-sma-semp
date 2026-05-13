@@ -152,7 +152,7 @@ async def createDevice(data: SempIntegrationData, prefix: str, myId: str):
         devId,
         config.name,
         config.semptyp,
-        f"{config.id}",
+        config.deviceserial,
         "None",
         config.sempmaxconsumption,
         config.sempminconsumption,

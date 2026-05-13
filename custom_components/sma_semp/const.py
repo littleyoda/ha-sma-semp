@@ -35,6 +35,7 @@ CONF_MINRUNNINGTIME = "minrunningtime"
 CONF_MAXRUNNINGTIME = "maxrunningtime"
 CONF_ONOFFSWITCH = "onoffswitch"
 CONF_PREFIX = "prefix"
+CONF_DEVICE_SERIAL = "deviceserial"
 
 PORT = 13673
 SMASEMP_COORDINATOR = "coordinator"
@@ -51,6 +52,17 @@ ATTR_DEVICEID = "deviceid"
 MY_KEY: HassKey["SempIntegrationData"] = HassKey(DOMAIN)
 from dacite import from_dict
 from dataclasses import asdict
+
+
+def normalize_device_serial(value: Any) -> str:
+    """Normalize a serial value for storage and SEMP output."""
+    if value is None:
+        return ""
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value).strip()
 
 
 @dataclass
@@ -80,12 +92,17 @@ class sensor_configuration:
     interruptable: bool = False
 
     prefix: str | None = "11223344"
+    deviceserial: str | None = None
 
     @staticmethod
     def from_dict(values: MappingProxyType[str, Any]):
         v = values.copy()
         if "prefix" in v and isinstance(v["prefix"], float):
             v["prefix"] = str(int(v["prefix"]))
+        if not normalize_device_serial(v.get(CONF_DEVICE_SERIAL)):
+            v[CONF_DEVICE_SERIAL] = normalize_device_serial(v.get("id"))
+        else:
+            v[CONF_DEVICE_SERIAL] = normalize_device_serial(v[CONF_DEVICE_SERIAL])
         c = from_dict(sensor_configuration, v)
         c.controllable = c.onoffswitch is not None
         c.interruptable = c.minontime is not None and c.minofftime is not None

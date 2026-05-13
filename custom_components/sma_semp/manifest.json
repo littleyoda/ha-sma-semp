@@ -9,10 +9,10 @@
   "documentation": "https://github.com/littleyoda/ha-sma-semp",
   "homekit": {},
   "iot_class": "local_push",
-  "requirements": ["pysma-plus>=0.3.24","dacite"],
+  "requirements": ["pysma-plus>=0.4.1","dacite"],
   "integration_type": "device",
   "loggers": ["smasemp","pysma"],
   "ssdp": [],
   "zeroconf": [],
-  "version": "0.4.4"
+  "version": "0.4.5"
 }

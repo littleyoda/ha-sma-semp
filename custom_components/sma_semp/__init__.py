@@ -7,11 +7,13 @@ from datetime import timedelta
 from http import HTTPStatus
 
 import aiohttp
+import voluptuous as vol
 from homeassistant.components import http
 from homeassistant.components.network import async_get_source_ip
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ConfigEntryNotReady
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.util import dt as dt_util
@@ -30,6 +32,21 @@ from .const import (
 from .dataupdater import sempCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
+CONF_BIND_IP = "bind_ip"
+CONF_HTTP_PORT = "http_port"
+
+CONFIG_SCHEMA = vol.Schema(
+    {
+        DOMAIN: vol.Schema(
+            {
+                vol.Optional(CONF_BIND_IP): cv.string,
+                vol.Optional(CONF_HTTP_PORT): cv.port,
+            }
+        )
+    },
+    extra=vol.ALLOW_EXTRA,
+)
 
 
 class HTTPEndpoint(http.HomeAssistantView):
@@ -71,16 +88,20 @@ async def async_setup(
 ) -> bool:
     """Setup Coordinator and start semp-services"""
     tz = dt_util.get_default_time_zone()
-    ip = await async_get_source_ip(hass)
+    conf = config.get(DOMAIN) or {}
+    ip = conf.get(CONF_BIND_IP) or await async_get_source_ip(hass)
+    embedded_httpd = CONF_HTTP_PORT in conf
     port = None
-    if hass.config and hass.config.api:
+    if embedded_httpd:
+        port = conf[CONF_HTTP_PORT]
+    elif hass.config and hass.config.api:
         port = hass.config.api.port
     if ip is None or ip == "" or port is None:
         _LOGGER.error(f"ip-address and/or port cannot be determined: {ip}:{port}")
         raise HomeAssistantError(
             f"ip-address and/or port cannot be determined: {ip}:{port}"
         )
-    _LOGGER.info(f"Binding to {ip}:{port}")
+    _LOGGER.info(f"Binding to {ip}:{port} (embeddedHttpd={embedded_httpd})")
     interval = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
 
     coordinator = sempCoordinator(hass, _LOGGER, "smasemp", interval)
@@ -90,7 +111,7 @@ async def async_setup(
         hass.http.register_view(x)
 
     hass.data[MY_KEY] = SempIntegrationData(control, coordinator, ip, port, {})
-    await control.start(embeddedHttpd=False)
+    await control.start(embeddedHttpd=embedded_httpd)
     _LOGGER.info("Finish setup %s", hass.data[MY_KEY])
     return True
 

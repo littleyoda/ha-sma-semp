@@ -61,6 +61,14 @@ Folgende Schritte sind notwendig:
 
 # Konfiguration
 
+## Optionale globale Einstellungen (configuration.yaml)
+
+```yaml
+smasemp:
+  bind_ip: 192.168.2.50   # SSDP/SEMP auf dieses Interface binden (Multi-Homed/VLAN)
+  http_port: 8199           # SEMP über eigenen Plain-HTTP-Server statt hass.http (HA mit TLS)
+```
+
 ## Hinzufügen von neuen Geräten (in Home Assistant)
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=smasemp)

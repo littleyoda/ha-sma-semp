@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ipaddress
 import logging
 from datetime import timedelta
 from http import HTTPStatus
+from typing import Any
 
 import aiohttp
 import voluptuous as vol
@@ -36,11 +38,20 @@ _LOGGER = logging.getLogger(__name__)
 CONF_BIND_IP = "bind_ip"
 CONF_HTTP_PORT = "http_port"
 
+
+def _ipv4_address(value: Any) -> str:
+    """Validate that the value is an IPv4 address."""
+    try:
+        return str(ipaddress.IPv4Address(value))
+    except (ipaddress.AddressValueError, ValueError) as err:
+        raise vol.Invalid(f"invalid IPv4 address: {value}") from err
+
+
 CONFIG_SCHEMA = vol.Schema(
     {
         DOMAIN: vol.Schema(
             {
-                vol.Optional(CONF_BIND_IP): cv.string,
+                vol.Optional(CONF_BIND_IP): vol.All(cv.string, _ipv4_address),
                 vol.Optional(CONF_HTTP_PORT): cv.port,
             }
         )
@@ -106,11 +117,14 @@ async def async_setup(
 
     coordinator = sempCoordinator(hass, _LOGGER, "smasemp", interval)
     control = semp(ip, port, tz, coordinator.sempcallback)
-    for route in control.getRoutes():
-        x = HTTPEndpoint(route)
-        hass.http.register_view(x)
+    if not embedded_httpd:
+        for route in control.getRoutes():
+            x = HTTPEndpoint(route)
+            hass.http.register_view(x)
 
-    hass.data[MY_KEY] = SempIntegrationData(control, coordinator, ip, port, {})
+    hass.data[MY_KEY] = SempIntegrationData(
+        control, coordinator, ip, port, {}, embedded_httpd
+    )
     await control.start(embeddedHttpd=embedded_httpd)
     _LOGGER.info("Finish setup %s", hass.data[MY_KEY])
     return True
@@ -123,12 +137,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     integrationData = hass.data[MY_KEY]
     prefix = f'{int(entry.data.get("prefix", "11223344")):08}'
     myId = f'{int(entry.data["id"]):012}'
+    # The embedded webserver serves the info page at "/",
+    # the HA view registers it at "/sempinfo".
+    info_path = "/" if integrationData.embedded_httpd else "/sempinfo"
     device_info = DeviceInfo(
         configuration_url="http://"
         + str(integrationData.ip)
         + ":"
         + str(integrationData.port)
-        + "/sempinfo",
+        + info_path,
         identifiers={(DOMAIN, myId)},
         manufacturer="SMA",
         model="SMA Semp Adapter",

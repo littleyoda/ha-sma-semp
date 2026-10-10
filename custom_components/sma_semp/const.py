@@ -155,3 +155,4 @@ class SempIntegrationData:
     ip: str
     port: int
     sendata: dict[str, SempDeviceInfo]
+    embedded_httpd: bool = False

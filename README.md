@@ -61,6 +61,14 @@ Folgende Schritte sind notwendig:
 
 # Konfiguration
 
+## Optionale globale Einstellungen (configuration.yaml)
+
+```yaml
+smasemp:
+  bind_ip: 192.168.2.50   # SSDP/SEMP auf dieses Interface binden (Multi-Homed/VLAN), muss eine IPv4-Adresse sein
+  http_port: 8199           # SEMP über eigenen Plain-HTTP-Server statt hass.http (HA mit TLS)
+```
+
 ## Hinzufügen von neuen Geräten (in Home Assistant)
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=smasemp)
@@ -120,7 +128,7 @@ Für die verlinkte URL, können zusätzliche Informationen zur Fehlersuche aufge
 
 Neben der Information, ob der SHM 2.0 die Daten abruft, ist erkennbar, welche Daten an den SHM 2.0 gemeldet wurden und ob der SHM 2.0 Steuerbefehle gesendet hat.
 
-Die Seite kann auch direkt über die URL <hostname/ip>/sempinfo/ aufgerufen werden.
+Die Seite kann auch direkt über die URL <hostname/ip>/sempinfo/ aufgerufen werden. Bei gesetztem `http_port` (eigener Webserver) lautet die URL stattdessen http://<bind_ip>:<http_port>/.
 
 
 ## Sensor-Attribute
